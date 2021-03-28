@@ -20,11 +20,13 @@ Install kedro
 https://kedro.readthedocs.io/en/stable/02_get_started/02_install.html
 
 If you are using pip
+
 ```
 pip install kedro
 ```
 
 or conda
+
 ```
 conda install -c conda-forge kedro
 ```
@@ -53,18 +55,17 @@ kedro jupyter notebook
 
 You can then easily access to data written in the data catalog
 
-
-
-
 ## Connectors
 
-### Ademe
+Pipelines overview:
 
+![plot](./pipelines_overview.png)
 
+Generated using kedro viz
+
+- [Ademe](src/ogs_connectors/pipelines/ademe/README.md)
 
 ## Contribute
-
-
 
 ## How to install dependencies
 
