@@ -1,3 +1,5 @@
+[[_TOC_]]
+
 # OGS Connectors
 
 ## Overview
@@ -43,7 +45,7 @@ We will be using the ADEME data for the following examples, explained [here](htt
 
 ### Data Catalog
 
-The data catalog is one of the most useful feature in Kedro. It allows us to define a dataset in a yaml file, it can be used for input and for output purposes.
+The data catalog is one of the most useful feature in Kedro. It allows us to define a dataset in a yaml file, it can be used for both input and output purposes.
 By defining a dataset within the data catalog, it can easily be read or written.
 The data catalog is defined in `conf/base/catalog.yml`.
 
@@ -78,15 +80,51 @@ assessments_df = catalog.load('ademe_assessments')
 
 Super easy!
 
+All the documentation related to data catalog can be found [here](https://kedro.readthedocs.io/en/stable/05_data/01_data_catalog.html).
 
-Each connector is an individual pipeline, defined in src/pipelines
+### Pipelines / Nodes
+
 
 ## How to use
 
-### Install kedro
+### Before starting
 
-Kedro highly recommend that you use a virtual environment in order to use , as
-explained [here](https://kedro.readthedocs.io/en/stable/02_get_started/01_prerequisites.html#virtual-environments).
+Kedro highly recommend that you use a virtual environment. In order to do so, follow the instructions [here](https://kedro.readthedocs.io/en/stable/02_get_started/01_prerequisites.html#virtual-environments). 
+I recommend using:
+- conda 
+- having the name `ogs-connectors` as the name of the conda virtual environment
+- using python=3.9
+
+Make sure you activate our environment each time you are opening your terminal to work on the project.
+```
+conda activate ogs-connectors
+```
+
+### Get the project
+
+Install the project using git clone
+```
+git clone https://github.com/OpenGeoScales/ogs-connectors.git
+```
+
+Move to the created directory
+```
+cd ogs-connectors
+```
+
+Install the dependencies
+```
+pip install -r src/requirements.txt
+```
+
+Test the kedro installation
+```
+kedro info
+```
+
+The command should be recognized, and you should see the kedro logo as well as the version.
+
+### Install kedro
 
 Install kedro
 https://kedro.readthedocs.io/en/stable/02_get_started/02_install.html
