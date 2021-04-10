@@ -2,7 +2,42 @@
 
 ## Overview
 
-This repository regroups the connectors used for the OGS project, it is based on Kedro's framework.
+This repository regroups the connectors used for the OGS project.
+What we call a "connector" is a packaged piece of code whose role is to integrate data from an outside source to our database(s), in a reliable way.
+In our case, the goal is to Extract and Transform data from the different open data sources to finally Load them into our environment (often called ETL).
+
+We distinguish two major external data sources (not exhaustive list):
+- **APIs**: "pullable" data from servers, often also allowing live data access
+- **Files**: downloadable data from websites, most of the time "snapshots"
+
+In the first weeks of OGS, we will focus on _files_, being the simplest way to access data.
+
+The raw data extracted from websites will be stored in our cloud provider's datalake, currently [AWS S3](https://aws.amazon.com/s3/).
+S3 is an easy access datalake, allowing us to share a single shared storage environment, with great read and write performances.
+
+## Kedro
+
+### What is it ?
+
+At OGS, we are using Kedro as our main python developing framework.
+Simply put, Kedro is a python library which offers a project structure/organization that facilitates the set up of reliable data pipelines, from data exploration, to production ready code.
+The main features that we will be taking advantage of are:
+- **Project structure**: Software-Engineering based code organisation. 
+- **Data catalog**: A simple declarative file to define the input output of your code, without caring about the read/write methods anymore.
+- **Pipelines / Nodes**: A DAG (direct acyclic graph) conception, allowing us to build well-defined data flows.
+- **Kedro-viz**: Useful visualization of the project's DAGs at a single glance.
+- **Notebook integration**: Kedro allows the creation of notebooks to prototype your workflows, _using the datacatalog_!
+
+We believe than using such a framework will facilitate the collaboration among the community. 
+Since its release in 2019, it got a lot of success from data science community, and the dev team keeps bringing additional features.
+I personally highly recommend starting using it even for personal projects, especially for the code organization feature, which really helps when your project tends to get complicated.
+
+If you want to know more about the Kedro's motivations, you can check their [original article](https://medium.com/quantumblack/introducing-kedro-the-open-source-library-for-production-ready-machine-learning-code-d1c6d26ce2cf)
+
+
+### Data Catalog
+
+One feature that really hu
 
 Kedro version `Kedro 0.17.2`.
 [Kedro documentation](https://kedro.readthedocs.io).
