@@ -91,7 +91,7 @@ All the documentation related to data catalog can be found [here](https://kedro.
 
 Kedro highly recommend that you use a virtual environment. In order to do so, follow the instructions [here](https://kedro.readthedocs.io/en/stable/02_get_started/01_prerequisites.html#virtual-environments). 
 I recommend using:
-- conda 
+- conda environment over venv
 - having the name `ogs-connectors` as the name of the conda virtual environment
 - using python=3.9
 
@@ -124,46 +124,24 @@ kedro info
 
 The command should be recognized, and you should see the kedro logo as well as the version.
 
-### Install kedro
-
-Install kedro
-https://kedro.readthedocs.io/en/stable/02_get_started/02_install.html
-
-If you are using pip
-
-```
-pip install kedro
-```
-
-or conda
-
-```
-conda install -c conda-forge kedro
-```
-
 ### Install the project
 
-To install the project, run:
+To install the kedro's dependencies, make sure you are at the rood of the directory and run:
 
 ```
 kedro install
 ```
 
-### Jupyter
+You should see at the end `Requirements installed!`
 
-To use Jupyter notebooks in your Kedro project, you need to install Jupyter:
+### Trying out jupyter
 
-```
-pip install jupyter
-```
-
-After installing Jupyter, you can start a local notebook server:
-
+By default, Jupyter will be installed. You can launch it through the command:
 ```
 kedro jupyter notebook
 ```
 
-You can then easily access to data written in the data catalog
+You can try out to create a new notebook in the `notebooks/` directory.
 
 
 ### Credentials
