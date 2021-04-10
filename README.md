@@ -32,15 +32,52 @@ We believe than using such a framework will facilitate the collaboration among t
 Since its release in 2019, it got a lot of success from data science community, and the dev team keeps bringing additional features.
 I personally highly recommend starting using it even for personal projects, especially for the code organization feature, which really helps when your project tends to get complicated.
 
-If you want to know more about the Kedro's motivations, you can check their [original article](https://medium.com/quantumblack/introducing-kedro-the-open-source-library-for-production-ready-machine-learning-code-d1c6d26ce2cf)
+If you want to know more about the Kedro's motivations, you can check their [original article](https://medium.com/quantumblack/introducing-kedro-the-open-source-library-for-production-ready-machine-learning-code-d1c6d26ce2cf) on medium.
+All the documentation is pretty straightforward: [Kedro documentation](https://kedro.readthedocs.io).
 
+We are using version `0.17.2`
+
+In the following we'll dive into some major features.
+
+We will be using the ADEME data for the following examples, explained [here](https://opengeoscales.github.io/CarbonData/#ademe).
 
 ### Data Catalog
 
-One feature that really hu
+The data catalog is one of the most useful feature in Kedro. It allows us to define a dataset in a yaml file, it can be used for input and for output purposes.
+By defining a dataset within the data catalog, it can easily be read or written.
+The data catalog is defined in `conf/base/catalog.yml`.
 
-Kedro version `Kedro 0.17.2`.
-[Kedro documentation](https://kedro.readthedocs.io).
+Let's take an example. We define the entry for one of the ademe file: 
+
+```yaml
+ademe_assessments:
+  type: pandas.CSVDataSet
+  filepath: s3://opengeoscales-dev/raw/ademe/beges/assessments.csv
+  credentials: dev_s3
+```
+
+Root key: _ademe_assessments_ is the name of our dataset, used as an identifier of the dataset.
+On the next level one defines a set of mandatory and optional parameters.
+
+In our case we simply precise the **type** of our dataset: _pandas.CSVDataset_, meaning our dataset is a CSV file that we want to manipulate as a Pandas DataFrame.
+**filepath** is the location of the file. In our case it is situated on AWS s3, so we include the full path.
+Next key is the **credentials**, it is necessary as we are using s3 and therefore need some credentials to access it.
+More can be found about credentials in the [credentials section](#credentials).
+
+Within a kedro jupyter notebook, we can then list the defined datasets using:
+```python
+# catalog is an object instantiated by default when starting a kedro jupyter notebook
+catalog.list()
+```
+
+We can then directly access one dataset 
+```python
+# Load our pandas DataFrame
+assessments_df = catalog.load('ademe_assessments')
+```
+
+Super easy!
+
 
 Each connector is an individual pipeline, defined in src/pipelines
 
@@ -89,6 +126,22 @@ kedro jupyter notebook
 ```
 
 You can then easily access to data written in the data catalog
+
+
+### Credentials
+
+Credentials need to be filled in a file located at `conf/local/credentials.yml`. File needs to be created manually, and **should never be pushed onto git**.
+
+Structure is as followed:
+
+```yaml
+# conf/local/credentials.yml
+# Here you can define credentials for different data sets and environment.
+dev_s3:
+  key: YOUR S3 KEY
+  secret: YOUR S3 secret
+```
+
 
 ## Connectors
 
