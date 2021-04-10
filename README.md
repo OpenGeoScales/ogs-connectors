@@ -1,5 +1,3 @@
-[[_TOC_]]
-
 # OGS Connectors
 
 ## Overview
@@ -95,7 +93,7 @@ I recommend using:
 - having the name `ogs-connectors` as the name of the conda virtual environment
 - using python=3.9
 
-Make sure you activate our environment each time you are opening your terminal to work on the project.
+Make sure you activate your environment each time you are opening your terminal to work on the project.
 ```
 conda activate ogs-connectors
 ```
@@ -143,6 +141,7 @@ kedro jupyter notebook
 
 You can try out to create a new notebook in the `notebooks/` directory.
 
+*You are ready to go*!
 
 ### Credentials
 
@@ -157,7 +156,6 @@ dev_s3:
   key: YOUR S3 KEY
   secret: YOUR S3 secret
 ```
-
 
 ## Connectors
 
