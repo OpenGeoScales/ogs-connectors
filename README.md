@@ -82,6 +82,87 @@ All the documentation related to data catalog can be found [here](https://kedro.
 
 ### Pipelines / Nodes
 
+Pipelines and Nodes are two major concepts of Kedro projects' architecture. If you are familiar with the concept of DAG (Direct Acyclic Graphs), then a DAG is a Kedro Pipeline, and a task/node is a Kedro Node.
+A Node is a simple task, it takes: 
+- a function 
+- some inputs (datasets or parameters)
+- some outputs (datasets)
+
+Input/Output datasets are entities from the data catalog, referenced by their identifier.
+Parameters are fields defined in the `conf/base/parameters.yml` file.
+
+#### Node
+
+Let's take an example: 
+
+```python
+# Import the Node object
+from kedro.pipeline import node
+
+# Define our node function
+def ademe_connector(assessments, emissions):
+    """
+    @param assessments: pandas Dataframe
+    @param emissions: pandas Dataframe
+    """
+    # Function code here
+    ...
+    return
+
+# Define the kedro node
+ademe_connector_node = node(
+    func=ademe_connector,
+    inputs=dict(
+        assessments='ademe_assessments',
+        emissions='ademe_emissions',
+    ),
+    outputs='ademe_merged'
+)
+```
+
+Here we have declared a single node to process ademe data, this is just one example as our connector could be split in several nodes rather than one big one.
+Our function is _ademe_connector_, our input are two datasets from the data catalog: _ademe_assessments_ and _ademe_emissions_.
+We define _ademe_merged_ dataset as our output dataset.
+
+When running the node, Kedro will load the datasets as Pandas Dataframe and pass them on to the function. We are thus expecting pandas Dataframe to be the input of our _ademe_connector_ function.
+
+As mentioned previously, we are never bothered to write a single line of code to deal with the read/write tasks, we are just using references to our datasets defined in our data catalog.
+
+Complete official documentation [here](https://kedro.readthedocs.io/en/0.15.4/04_user_guide/05_nodes.html).
+
+#### Pipeline
+
+A Pipeline is simply a list of Nodes. It takes as input a list of Kedro nodes, once ran, it will trigger the different nodes.
+The order of the nodes matters, as by default, one node will be executed once the previous one has been finished.
+You also have the option to activate multi threading so that all nodes are executed at the same time.
+You can also create a pipeline created from other pipelines, in order to have complex DAGs.
+
+Let's take a simple example:
+
+```python
+# Import the Pipeline object
+from kedro.pipeline import Pipeline
+
+# Import our created nodes
+from .nodes import ademe_transformer_node
+from .nodes import ademe_mapper_node
+
+# Define our pipeline
+def create_pipeline(**kwargs):
+    return Pipeline(
+        [
+            ademe_transformer_node,
+            ademe_mapper_node
+        ]
+    )
+
+```
+
+Here we simply imported our nodes from a different python file, we have written down the _create_pipeline_ function, which simply returns a Pipeline object, instantiated with the two nodes we have imported, _ademe_transformer_node_ and _ademe_mapper_node_ (fake nodes).
+
+When this pipeline will be run, it will first launch the _ademe_transformer_node and once it's succeeded it will trigger the _ademe_mapper_node_.
+
+Complete official documentation [here](https://kedro.readthedocs.io/en/0.15.4/04_user_guide/06_pipelines.html).
 
 ## How to use
 
@@ -105,6 +186,8 @@ Install the project using git clone
 git clone https://github.com/OpenGeoScales/ogs-connectors.git
 ```
 
+### Install the project
+
 Move to the created directory
 ```
 cd ogs-connectors
@@ -121,10 +204,7 @@ kedro info
 ```
 
 The command should be recognized, and you should see the kedro logo as well as the version.
-
-### Install the project
-
-To install the kedro's dependencies, make sure you are at the rood of the directory and run:
+Finally, to install the kedro's dependencies, make sure you are at the rood of the directory and run:
 
 ```
 kedro install
@@ -157,6 +237,8 @@ dev_s3:
   secret: YOUR S3 secret
 ```
 
+Contact the admin if you did not get your credentials.
+
 ## Connectors
 
 Pipelines overview:
@@ -168,8 +250,6 @@ Generated using kedro viz
 - [Ademe](src/ogs_connectors/pipelines/ademe/README.md)
 
 ## Contribute
-
-## How to install dependencies
 
 Declare any dependencies in `src/requirements.txt` for `pip` installation and `src/environment.yml` for `conda`
 installation.
@@ -202,4 +282,3 @@ To generate or update the dependency requirements for your project:
 ```
 kedro build-reqs
 ```
-
