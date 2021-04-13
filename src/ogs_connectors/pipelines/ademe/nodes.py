@@ -73,6 +73,10 @@ def processing(emissions, assessments, scope_items):
 
 
 def ademe_connector(assessments, emissions, legal_units, scope_items, texts):
+    """
+    @param emissions: pandas Dataframe
+    @param assessments: pandas Dataframe
+    """
     # Assessments mapping and output cols definition
     assessments = entity_preprocessing(
         df=assessments,
@@ -91,7 +95,7 @@ def ademe_connector(assessments, emissions, legal_units, scope_items, texts):
 
 
 ademe_connector_node = node(
-    ademe_connector,
+    func=ademe_connector,
     inputs=dict(
         assessments='ademe_assessments',
         emissions='ademe_emissions',

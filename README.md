@@ -83,6 +83,9 @@ All the documentation related to data catalog can be found [here](https://kedro.
 ### Pipelines / Nodes
 
 Pipelines and Nodes are two major concepts of Kedro projects' architecture. If you are familiar with the concept of DAG (Direct Acyclic Graphs), then a DAG is a Kedro Pipeline, and a task/node is a Kedro Node.
+
+#### Node
+
 A Node is a simple task, it takes: 
 - a function 
 - some inputs (datasets or parameters)
@@ -90,8 +93,6 @@ A Node is a simple task, it takes:
 
 Input/Output datasets are entities from the data catalog, referenced by their identifier.
 Parameters are fields defined in the `conf/base/parameters.yml` file.
-
-#### Node
 
 Let's take an example: 
 
@@ -160,9 +161,77 @@ def create_pipeline(**kwargs):
 
 Here we simply imported our nodes from a different python file, we have written down the _create_pipeline_ function, which simply returns a Pipeline object, instantiated with the two nodes we have imported, _ademe_transformer_node_ and _ademe_mapper_node_ (fake nodes).
 
-When this pipeline will be run, it will first launch the _ademe_transformer_node and once it's succeeded it will trigger the _ademe_mapper_node_.
+When this pipeline will be run, it will first launch the _ademe_transformer_node_ and once it's succeeded it will trigger the _ademe_mapper_node_.
 
 Complete official documentation [here](https://kedro.readthedocs.io/en/0.15.4/04_user_guide/06_pipelines.html).
+
+### Files organisation
+
+Each pipeline is defined inside its own sub repository inside the main directory, in our case `ogs_connectors/pipelines`.
+A pipeline folder is organised as followed:
+
+```
+__init__.py
+nodes.py
+pipeline.py
+some_python_file.py
+some_sub_directory/
+```
+
+- *\_\_init\_\_.py* should be untouched, it contains a single line to allow easy import for Kedro's framework.
+- *pipeline.py* is where we defined our pipeline, as explained in [precedent section](#pipeline)
+- *nodes.py* is where we defined our different nodes, as explained in [precedent section](#pipeline)
+- some_python_file.py is just an example to illustrate the fact that additional python file can be defined here to be imported for example by our _nodes.py_ file.
+- some_sub_directory/ is just an example to illustrate the fact than a sub folder can also be created at the pipeline root if needed.
+
+It is recommended to have all the code related to a pipeline and its nodes within the pipeline folder.
+However, it is also a good practice to have a higher level folder containing other functions / modules than can be mutually shared by pipelines.
+Same goes with nodes, one can imagine that 2 different pipelines share the same nodes, with or without the same input/outputs.
+
+Once a pipeline has been written, it needs to be registered, in the file `src/ogs_connectors/pipeline_registry.py`
+
+It looks like such:
+
+```python
+
+# Import your pipeline
+from ogs_connectors.pipelines import ademe
+
+
+def register_pipelines() -> Dict[str, Pipeline]:
+    """Register the project's pipelines.
+
+    Returns:
+        A mapping from a pipeline name to a ``Pipeline`` object.
+
+    """
+    # Declare your pipeline here
+    ademe_pipeline = ademe.create_pipeline()
+
+    # Define the trigger key word
+    return {
+        "ademe": ademe_pipeline,
+        "__default__": ademe_pipeline,
+    }
+```
+
+In our example, we have imported our `ademe` pipeline, we simply declare the pipeline with the `create_pipeline()` method.
+Once done, we add an entry to the output directory to associate a key word with our pipeline.
+We can later trigger our pipeline by launching in the terminal:
+
+```bash
+kedro run --pipeline ademe
+```
+
+Which will trigger our `ademe_pipeline`.
+
+There also is a `__default__` key word, that can also be linked to a pipeline, to be triggered as the default pipeline.
+To run the default pipeline, simply run
+
+```bash
+kedro run
+```
+
 
 ## How to use
 
