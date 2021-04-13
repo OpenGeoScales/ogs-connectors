@@ -15,6 +15,106 @@ In the first weeks of OGS, we will focus on _files_, being the simplest way to a
 The raw data extracted from websites will be stored in our cloud provider's datalake, currently [AWS S3](https://aws.amazon.com/s3/).
 S3 is an easy access datalake, allowing us to share a single shared storage environment, with great read and write performances.
 
+## Connectors
+
+Pipelines overview:
+
+![plot](./pipelines_overview.png)
+
+Generated using kedro viz
+
+Implemented connectors so far:
+
+- [Ademe - WIP](src/ogs_connectors/pipelines/ademe/README.md)
+
+
+## Data modeling
+
+WIP
+
+## Contribute
+
+If you'd like to contribute, you can create your own pipeline to connect a given dataset and transform it to our data model!
+
+More can be found about creating your own pipeline in the [kedro section](#kedro)
+
+You can create a pull request to add or update an existing pipeline, do not forget to declare any dependencies in `src/requirements.txt`.
+
+## How to use
+
+### Before starting
+
+Kedro highly recommend that you use a virtual environment. In order to do so, follow the instructions [here](https://kedro.readthedocs.io/en/stable/02_get_started/01_prerequisites.html#virtual-environments). 
+I recommend using:
+- conda environment over venv
+- having the name `ogs-connectors` as the name of the conda virtual environment
+- using python=3.9
+
+Make sure you activate your environment each time you are opening your terminal to work on the project.
+```
+conda activate ogs-connectors
+```
+
+### Get the project
+
+Install the project using git clone
+```
+git clone https://github.com/OpenGeoScales/ogs-connectors.git
+```
+
+### Install the project
+
+Move to the created directory
+```
+cd ogs-connectors
+```
+
+Install the dependencies
+```
+pip install -r src/requirements.txt
+```
+
+Test the kedro installation
+```
+kedro info
+```
+
+The command should be recognized, and you should see the kedro logo as well as the version.
+Finally, to install the kedro's dependencies, make sure you are at the rood of the directory and run:
+
+```
+kedro install
+```
+
+You should see at the end `Requirements installed!`
+
+### Trying out jupyter
+
+By default, Jupyter will be installed. You can launch it through the command:
+```
+kedro jupyter notebook
+```
+
+You can try out to create a new notebook in the `notebooks/` directory.
+
+*You are ready to go*!
+
+### Credentials
+
+Credentials need to be filled in a file located at `conf/local/credentials.yml`. File needs to be created manually, and **should never be pushed onto git**.
+
+Structure is as followed:
+
+```yaml
+# conf/local/credentials.yml
+# Here you can define credentials for different data sets and environment.
+dev_s3:
+  key: YOUR S3 KEY
+  secret: YOUR S3 secret
+```
+
+Contact the admin if you did not get your credentials.
+
 ## Kedro
 
 ### What is it ?
@@ -232,106 +332,7 @@ To run the default pipeline, simply run
 kedro run
 ```
 
-
-## How to use
-
-### Before starting
-
-Kedro highly recommend that you use a virtual environment. In order to do so, follow the instructions [here](https://kedro.readthedocs.io/en/stable/02_get_started/01_prerequisites.html#virtual-environments). 
-I recommend using:
-- conda environment over venv
-- having the name `ogs-connectors` as the name of the conda virtual environment
-- using python=3.9
-
-Make sure you activate your environment each time you are opening your terminal to work on the project.
-```
-conda activate ogs-connectors
-```
-
-### Get the project
-
-Install the project using git clone
-```
-git clone https://github.com/OpenGeoScales/ogs-connectors.git
-```
-
-### Install the project
-
-Move to the created directory
-```
-cd ogs-connectors
-```
-
-Install the dependencies
-```
-pip install -r src/requirements.txt
-```
-
-Test the kedro installation
-```
-kedro info
-```
-
-The command should be recognized, and you should see the kedro logo as well as the version.
-Finally, to install the kedro's dependencies, make sure you are at the rood of the directory and run:
-
-```
-kedro install
-```
-
-You should see at the end `Requirements installed!`
-
-### Trying out jupyter
-
-By default, Jupyter will be installed. You can launch it through the command:
-```
-kedro jupyter notebook
-```
-
-You can try out to create a new notebook in the `notebooks/` directory.
-
-*You are ready to go*!
-
-### Credentials
-
-Credentials need to be filled in a file located at `conf/local/credentials.yml`. File needs to be created manually, and **should never be pushed onto git**.
-
-Structure is as followed:
-
-```yaml
-# conf/local/credentials.yml
-# Here you can define credentials for different data sets and environment.
-dev_s3:
-  key: YOUR S3 KEY
-  secret: YOUR S3 secret
-```
-
-Contact the admin if you did not get your credentials.
-
-## Connectors
-
-Pipelines overview:
-
-![plot](./pipelines_overview.png)
-
-Generated using kedro viz
-
-- [Ademe](src/ogs_connectors/pipelines/ademe/README.md)
-
-## Contribute
-
-Declare any dependencies in `src/requirements.txt` for `pip` installation and `src/environment.yml` for `conda`
-installation.
-
-## How to run Kedro
-
-You can run your Kedro project with:
-
-```
-kedro run
-```
-
-It will run the default pipeline, defined here _src/ogs_connectors/pipeline_registry.py_ as the \___default__\_.
+### Annexes
 
 ## How to test your Kedro project
 
