@@ -25,13 +25,13 @@
       "type": "object",
       "required": [
         "type",
-        "iso_code"
+        "identifier"
       ],
       "properties": {
         "type": {
           "type": "string"
         },
-        "iso_code": {
+        "identifier": {
           "type": "object",
           "required": [
             "id",
