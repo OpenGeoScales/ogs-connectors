@@ -1,3 +1,6 @@
+import datetime
+
+
 def row_mapping(row):
     """
     Given a pandas Dataframe rows, map to the desired dict format
@@ -5,25 +8,24 @@ def row_mapping(row):
     :return:
     """
     return {
-        'data_provider': {
-            'name': 'ademe',
-        },
         'data_source:': {
             'name': 'ademe',
             'link': 'url'
         },
-        'geo': {
-            'organization': row['organization_name']
+        'geo_component': {
+            'type': 'Country',
+            'iso_code': {
+                'code': 'FRA',
+                'type': 'alpha2'
+            }
         },
-        'time': {
-            'scale': 'year',
-            'value': row['reporting_year']
-        },
+        'date': datetime.datetime(row['reporting_year'], 1, 1).strftime('%Y-%m-%d'),
         'emission': {
             'gas': row['gas'],
             'value': row['value'],
-            'scope_name': row['scope_label'],
-            'sub_scope_name': row['label']
+            'unit': 'tone',
+            'sector_name': row['scope_label'],
+            'sub_sector_name': row['label']
         }
     }
 

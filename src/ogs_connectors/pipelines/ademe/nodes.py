@@ -69,6 +69,8 @@ def processing(emissions, assessments, scope_items):
         axis=1
     )
 
+    clean_emissions = clean_emissions[:10]
+
     return clean_emissions
 
 

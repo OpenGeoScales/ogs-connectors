@@ -5,6 +5,18 @@
 #
 # We support interacting with a variety of data stores including local file systems, cloud, network and HDFS
 
+# REFERENTIALS
+data_sources:
+  type: text.TextDataSet
+  filepath: data/referentials/data_sources.json
+
+# SCHEMAS
+schema_staging:
+  type: ogs_connectors.extras.datasets.json_file_dataset.JSONFileDataSet
+  filepath: data/schemas/staging.json
+  versioned: false
+#  load_args:
+#    orient: values
 
 # ADEME
 
@@ -38,3 +50,24 @@ ademe_texts:
 ademe_merged:
   type: pandas.JSONDataSet
   filepath: data/01_raw/test.json
+  save_args:
+    orient: records
+    lines: true
+
+
+# CDIAC
+
+# Input
+cdiac_nations_emissions:
+  type: pandas.CSVDataSet
+  filepath: s3://ogs-dev/data/raw/ghg-emissions/cdiac/Fossil-Fuel_CO2_Emissions_by_Nation.csv
+  credentials: dev_s3
+
+
+# GCP
+gcp:
+  type: ogs_connectors.extras.datasets.json_lines_dataset.JSONLinesDataSet
+  filepath: data/01_raw/gcp-carbon-v2.json
+#  load_args:
+#    orient: records
+#    lines: true
