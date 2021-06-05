@@ -1,6 +1,6 @@
 black==v19.10b0
 flake8>=3.7.9, <4.0
-ipython~=7.21.0
+ipython~=7.10.0
 isort>=4.3.21, <5.0
 jupyter==1.0
 jupyter_client>=5.1, <7.0
@@ -14,4 +14,8 @@ wheel==0.32.2
 setuptools~=49.6.0
 s3fs==0.5.2
 click~=7.1.2
-pandas
+pandas~=1.2.3
+jsonschema~=3.2.0
+fsspec~=0.8.7
+numpy~=1.20.1
+tqdm~=4.60.0

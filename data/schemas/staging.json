@@ -24,11 +24,11 @@
     "geo_component": {
       "type": "object",
       "required": [
-        "type",
+        "scale",
         "identifier"
       ],
       "properties": {
-        "type": {
+        "scale": {
           "type": "string"
         },
         "identifier": {
@@ -57,7 +57,7 @@
         "gas",
         "value",
         "unit",
-        "sector_name"
+        "sector"
       ],
       "properties": {
         "gas": {
@@ -67,13 +67,29 @@
           "type": "number"
         },
         "unit": {
-          "type": "string"
+          "type": "object",
+          "required": [
+            "unit_used"
+          ],
+          "properties": {
+            "unit_used": {
+              "type": "string"
+            }
+          }
         },
-        "sector_name": {
-          "type": "string"
-        },
-        "sub_sector_name": {
-          "type": "string"
+        "sector": {
+          "type": "object",
+          "required": [
+            "sector_origin_name"
+          ],
+          "properties": {
+            "sector_name": {
+              "type": "string"
+            },
+            "sub_sector_name": {
+              "type": "string"
+            }
+          }
         }
       }
     }
