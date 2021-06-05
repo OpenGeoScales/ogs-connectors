@@ -38,9 +38,10 @@ gcp_mtco2_flat:
     encoding: latin
 
 # Output
-gcp_merged:
+gcp_staging:
   type: ogs_connectors.extras.datasets.json_lines_dataset.JSONLinesDataSet
-  filepath: data/01_raw/gcp_merged.json
+  filepath: s3://ogs-dev/data/staging/ghg-emissions/gcp/data.json
+  credentials: dev_s3
 
 #############
 # ADEME

@@ -16,7 +16,7 @@ import json
 class JSONLinesDataSet(AbstractVersionedDataSet):
     _version = False
 
-    def __init__(self, filepath: str, version: Optional[Version] = 0):
+    def __init__(self, filepath: str, version: Optional[Version] = 0, credentials: Dict[str, Any] = None):
         """Creates a new instance of JSONLinesDataSet.
         Each line of the file is a json object
 
@@ -28,7 +28,7 @@ class JSONLinesDataSet(AbstractVersionedDataSet):
         protocol, path = get_protocol_and_path(filepath)
         self._protocol = protocol
         self._filepath = PurePosixPath(path)
-        self._fs = fsspec.filesystem(self._protocol)
+        self._fs = fsspec.filesystem(self._protocol, **credentials)
 
     def _describe(self) -> Dict[str, Any]:
         """Returns a dict that describes the attributes of the dataset."""
