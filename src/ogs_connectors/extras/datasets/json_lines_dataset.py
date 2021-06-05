@@ -17,7 +17,8 @@ class JSONLinesDataSet(AbstractVersionedDataSet):
     _version = False
 
     def __init__(self, filepath: str, version: Optional[Version] = 0):
-        """Creates a new instance of ImageDataSet to load / save image data for given filepath.
+        """Creates a new instance of JSONLinesDataSet.
+        Each line of the file is a json object
 
         Args:
             filepath: The location of the image file to load / save data.
@@ -34,10 +35,10 @@ class JSONLinesDataSet(AbstractVersionedDataSet):
         return dict(filepath=self._filepath, protocol=self._protocol)
 
     def _load(self) -> List[dict]:
-        """Loads data from the image file.
+        """Loads list of dict from the file.
 
         Returns:
-            Data from the image file as a numpy array
+            Data from the file as a list of dicts
         """
         # using get_filepath_str ensures that the protocol and path are appended correctly for different filesystems
         load_path = get_filepath_str(self._get_load_path(), self._protocol)
@@ -48,7 +49,7 @@ class JSONLinesDataSet(AbstractVersionedDataSet):
         return data
 
     def _save(self, data: List[dict]) -> None:
-        """Saves image data to the specified filepath."""
+        """Saves list of dicts to the specified filepath."""
         # using get_filepath_str ensures that the protocol and path are appended correctly for different filesystems
         save_path = get_filepath_str(self._get_save_path(), self._protocol)
 

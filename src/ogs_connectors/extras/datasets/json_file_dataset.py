@@ -17,10 +17,11 @@ class JSONFileDataSet(AbstractVersionedDataSet):
     _version = False
 
     def __init__(self, filepath: str):
-        """Creates a new instance of ImageDataSet to load / save image data for given filepath.
+        """Creates a new instance of JsonFileDataSet.
+        Simple json file
 
         Args:
-            filepath: The location of the image file to load / save data.
+            filepath: The location of the json file to load / save data.
         """
         # parse the path and protocol (e.g. file, http, s3, etc.)
         protocol, path = get_protocol_and_path(filepath)
@@ -32,19 +33,19 @@ class JSONFileDataSet(AbstractVersionedDataSet):
         """Returns a dict that describes the attributes of the dataset."""
         return dict(filepath=self._filepath, protocol=self._protocol)
 
-    def _load(self) -> np.ndarray:
-        """Loads data from the image file.
+    def _load(self) -> Dict[str, Any]:
+        """Loads dict from the json file.
 
         Returns:
-            Data from the image file as a numpy array
+            dict
         """
         # using get_filepath_str ensures that the protocol and path are appended correctly for different filesystems
         load_path = get_filepath_str(self._get_load_path(), self._protocol)
         with self._fs.open(load_path) as f:
             return json.load(f)
 
-    def _save(self, data: List[Dict]) -> None:
-        """Saves image data to the specified filepath."""
+    def _save(self, data: Dict[str, Any]) -> None:
+        """Saves dict to json to the specified filepath."""
         # using get_filepath_str ensures that the protocol and path are appended correctly for different filesystems
         save_path = get_filepath_str(self._get_save_path(), self._protocol)
         with self._fs.open(save_path, "wb") as f:
