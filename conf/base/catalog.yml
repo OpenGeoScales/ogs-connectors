@@ -1,49 +1,75 @@
-# Here you can define all your data sets by using simple YAML syntax.
-#
-# Documentation for this file format can be found in "The Data Catalog"
-# Link: https://kedro.readthedocs.io/en/stable/05_data/01_data_catalog.html
-#
-# We support interacting with a variety of data stores including local file systems, cloud, network and HDFS
-
+########################
+########################
 # REFERENTIALS
+########################
+########################
+
 data_sources:
   type: text.TextDataSet
   filepath: data/referentials/data_sources.json
 
+########################
+########################
 # SCHEMAS
+########################
+########################
+
 schema_staging:
   type: ogs_connectors.extras.datasets.json_file_dataset.JSONFileDataSet
   filepath: data/schemas/staging.json
   versioned: false
-#  load_args:
-#    orient: values
 
+########################
+########################
+# DATA SOURCES
+########################
+########################
+
+#############
+# GCP
+#############
+
+# Input
+gcp_mtco2_flat:
+  type: pandas.CSVDataSet
+  filepath: s3://ogs-dev/data/raw/ghg-emissions/gcp/GCB2020v18_MtCO2_flat.csv
+  credentials: dev_s3
+  load_args:
+    encoding: latin
+
+# Output
+gcp_merged:
+  type: ogs_connectors.extras.datasets.json_lines_dataset.JSONLinesDataSet
+  filepath: data/01_raw/gcp_merged.json
+
+#############
 # ADEME
+#############
 
 # Input
 ademe_assessments:
   type: pandas.CSVDataSet
-  filepath: s3://opengeoscales-dev/raw/ademe/beges/assessments.csv
+  filepath: s3://ogs-dev/data/raw/ghg-emissions/ademe/beges/assessments.csv
   credentials: dev_s3
 
 ademe_emissions:
   type: pandas.CSVDataSet
-  filepath: s3://opengeoscales-dev/raw/ademe/beges/emissions.csv
+  filepath: s3://ogs-dev/data/raw/ghg-emissions/ademe/beges/emissions.csv
   credentials: dev_s3
 
 ademe_legal_units:
   type: pandas.CSVDataSet
-  filepath: s3://opengeoscales-dev/raw/ademe/beges/legal_units.csv
+  filepath: s3://ogs-dev/data/raw/ghg-emissions/ademe/beges/legal_units.csv
   credentials: dev_s3
 
 ademe_scope_items:
   type: pandas.CSVDataSet
-  filepath: s3://opengeoscales-dev/raw/ademe/beges/scope_items.csv
+  filepath: s3://ogs-dev/data/raw/ghg-emissions/ademe/beges/scope_items.csv
   credentials: dev_s3
 
 ademe_texts:
   type: pandas.CSVDataSet
-  filepath: s3://opengeoscales-dev/raw/ademe/beges/texts.csv
+  filepath: s3://ogs-dev/data/raw/ghg-emissions/ademe/beges/texts.csv
   credentials: dev_s3
 
 # Output
@@ -54,8 +80,9 @@ ademe_merged:
     orient: records
     lines: true
 
-
+#############
 # CDIAC
+#############
 
 # Input
 cdiac_nations_emissions:
@@ -63,11 +90,3 @@ cdiac_nations_emissions:
   filepath: s3://ogs-dev/data/raw/ghg-emissions/cdiac/Fossil-Fuel_CO2_Emissions_by_Nation.csv
   credentials: dev_s3
 
-
-# GCP
-gcp:
-  type: ogs_connectors.extras.datasets.json_lines_dataset.JSONLinesDataSet
-  filepath: data/01_raw/gcp-carbon-v2.json
-#  load_args:
-#    orient: records
-#    lines: true
