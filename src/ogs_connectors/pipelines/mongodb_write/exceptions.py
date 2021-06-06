@@ -1,0 +1,2 @@
+class InsertEmissionError(Exception):
+    pass

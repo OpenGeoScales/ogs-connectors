@@ -1,0 +1,5 @@
+relational_mongodb:
+  database_name: "ogs"
+  geo_components_collection_name: "geo_components"
+  data_sources_collection_name: "data_sources"
+  emissions_collection_name: "emissions"
