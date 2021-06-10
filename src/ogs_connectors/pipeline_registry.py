@@ -33,6 +33,7 @@ from kedro.pipeline import Pipeline
 
 from ogs_connectors.pipelines import ademe
 from ogs_connectors.pipelines import gcp
+from ogs_connectors.pipelines import mongodb_write
 
 
 def register_pipelines() -> Dict[str, Pipeline]:
@@ -44,9 +45,11 @@ def register_pipelines() -> Dict[str, Pipeline]:
     """
     ademe_pipeline = ademe.create_pipeline()
     gcp_pipeline = gcp.create_pipeline()
+    mongodb_write_pipeline = mongodb_write.create_pipeline()
 
     return {
         "ademe": ademe_pipeline,
         "gcp": gcp_pipeline,
+        "mongodb_write": mongodb_write_pipeline,
         "__default__": ademe_pipeline,
     }
