@@ -99,9 +99,11 @@ def create_document(emission: Dict, ref_geo_components: List[Dict], ref_data_sou
     return emission_document
 
 
-def insert_emissions(emissions, mongodb_params):
+def insert_emissions(emissions: List[Dict], mongodb_params: Dict) -> None:
     """
-    Given a list of emissions, insert them into the collection
+    Given a list of emissions, insert them into the emissions_collection
+    @param emissions: list of dicts, emissions
+    @param mongodb_params: dict, mongodb connection parameters
     """
     # Get credentials for current session
     # TODO: find alternative (currently using private function)
@@ -130,6 +132,7 @@ def insert_emissions(emissions, mongodb_params):
     nb_failed = 0
     documents_to_insert = []
 
+    # Create documents to insert out of emissions
     for emission in tqdm(emissions):
         try:
             document = create_document(emission, ref_geo_components, ref_data_sources)
@@ -139,6 +142,7 @@ def insert_emissions(emissions, mongodb_params):
             logger.error('Failed to insert emission: %s' % e)
             nb_failed += 1
 
+    # Batch insert of created documents
     emissions_collection.insert_many(documents_to_insert)
 
     logger.info('Succesfully inserted %s emissions.' % nb_inserted)
