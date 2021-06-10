@@ -1,5 +1,11 @@
 relational_mongodb:
-  database_name: "ogs"
+  database_name: "ogs-prod-emissions"
   geo_components_collection_name: "geo_components"
   data_sources_collection_name: "data_sources"
   emissions_collection_name: "emissions"
+  connection_params:
+    ssl: "true"
+    replicaSet: "atlas-8bbiph-shard-0"
+    authSource: "admin"
+    retryWrites: "true"
+    w: "majority"
