@@ -30,7 +30,7 @@ def row_mapping(row):
             'scale': 'Country',
             'identifier': {
                 'id': row['country_alpha-3'],
-                'type': 'alpha-3'
+                'type': 'alpha3'
             }
         },
         'date': datetime.datetime(row['Year'], 1, 1).strftime('%Y-%m-%d'),
