@@ -1,51 +1,37 @@
 from .exceptions import InsertEmissionError
-import pymongo
-import json
+from .io_tools import get_mongodb_client
 from tqdm import tqdm
-from kedro.config import ConfigLoader
+from typing import List, Dict, Optional
 import logging
+from kedro.framework.session import get_current_session
 
 logger = logging.getLogger(__name__)
 
-try:
-    # Try to get credentials (only in run mode, not in notebooks)
-    conf_paths = ["conf/base", "conf/local"]
-    conf_loader = ConfigLoader(conf_paths)
-    credentials = conf_loader.get("credentials*")
-except ValueError:
-    credentials = None
 
-
-def get_geo_components(geo_components_collection):
+def get_geo_components(geo_components_collection) -> List[Dict]:
     """
-
-    @param geo_components_collection:
+    Get all documents from the geo_components_collection
+    @param geo_components_collection: pymongo collection
     @return:
     """
     return list(geo_components_collection.find({}))
 
 
-def get_data_sources(data_sources_collection):
+def get_data_sources(data_sources_collection) -> List[Dict]:
     """
-
-    @param data_sources_collection:
+    Gel all documents from the data_sources_collection
+    @param data_sources_collection: pymongo collection
     @return:
     """
     return list(data_sources_collection.find({}))
 
 
-def cast_json(line):
-    try:
-        json_sample = json.loads(line)
-    except:
-        logging.error('Failed to parse to json:', line)
-        return {}
-    return json_sample
-
-
-def find_geo_component(geo_component, ref_geo_components):
+def find_geo_component(geo_component: Dict, ref_geo_components: List[Dict]) -> Optional[str]:
     """
     Given a geo_component, return its id in the referential, None if not found
+    @param geo_component: dict, geo_component to find
+    @param ref_geo_components: list of dict, list of the geo_components to find among
+    @rtype: object
     """
     # Get geo_component identifier type
     identifier_type = geo_component['identifier']['type']
@@ -61,9 +47,11 @@ def find_geo_component(geo_component, ref_geo_components):
     return None
 
 
-def find_data_source(data_source, ref_data_sources):
+def find_data_source(data_source: Dict, ref_data_sources: List[Dict]) -> Optional[str]:
     """
     Given a data_source, return its id in the referential, None if not found
+    @param data_source: dict, data_source to find
+    @param ref_data_sources: list of dict, list of the data_sources to find among
     """
     for ref_data_source in ref_data_sources:
         if data_source['name'] == ref_data_source['name']:
@@ -72,9 +60,12 @@ def find_data_source(data_source, ref_data_sources):
     return None
 
 
-def insert_emission(emissions_collection, emission, ref_geo_components, ref_data_sources):
+def create_document(emission: Dict, ref_geo_components: List[Dict], ref_data_sources: List[Dict]) -> Dict:
     """
     Given an emission and referentials, try to insert the emission
+    @param emission:
+    @param ref_geo_components:
+    @param ref_data_sources:
     """
     # Get geo_component id
     geo_component_id = find_geo_component(
@@ -105,34 +96,50 @@ def insert_emission(emissions_collection, emission, ref_geo_components, ref_data
         'sector': emission['emission']['sector'],
     }
 
-    emissions_collection.insert_one(emission_document)
+    return emission_document
 
 
 def insert_emissions(emissions, mongodb_params):
     """
     Given a list of emissions, insert them into the collection
     """
-    client = pymongo.MongoClient(credentials['relational_mongodb']['url'])
+    # Get credentials for current session
+    # TODO: find alternative (currently using private function)
+    session = get_current_session()
+    context = session.load_context()
+    credentials = context._get_config_credentials()
+
+    # Create mongodb clients from params and credentials
+    client = get_mongodb_client(
+        mongodb_params=mongodb_params,
+        mongodb_credentials=credentials['relational_mongodb']
+
+    )
+
+    # Get database and associated collections
     db = client.get_database(mongodb_params.get('database_name'))
     geo_components_collection = db[mongodb_params.get('geo_components_collection_name')]
     data_sources_collection = db[mongodb_params.get('data_sources_collection_name')]
     emissions_collection = db[mongodb_params.get('emissions_collection_name')]
 
-    print(emissions[:3])
-
+    # Load once referential collections
     ref_geo_components = get_geo_components(geo_components_collection)
     ref_data_sources = get_data_sources(data_sources_collection)
 
     nb_inserted = 0
     nb_failed = 0
+    documents_to_insert = []
 
     for emission in tqdm(emissions):
         try:
-            insert_emission(emissions_collection, emission, ref_geo_components, ref_data_sources)
+            document = create_document(emission, ref_geo_components, ref_data_sources)
+            documents_to_insert.append(document)
             nb_inserted += 1
         except InsertEmissionError as e:
             logger.error('Failed to insert emission: %s' % e)
             nb_failed += 1
+
+    emissions_collection.insert_many(documents_to_insert)
 
     logger.info('Succesfully inserted %s emissions.' % nb_inserted)
     if nb_failed:
