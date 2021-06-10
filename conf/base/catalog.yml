@@ -44,6 +44,22 @@ gcp_staging:
   credentials: dev_s3
 
 #############
+# WRI-UNFCCC
+#############
+
+# Input
+wri_unfccc_cw_ghg:
+  type: pandas.ExcelDataSet
+  filepath: s3://ogs-dev/data/raw/ghg-emissions/wri/CW_UNFCCC_GHG_Emissions.xlsx
+  credentials: dev_s3
+
+# Output
+wri_unfccc_staging:
+  type: ogs_connectors.extras.datasets.json_lines_dataset.JSONLinesDataSet
+  filepath: s3://ogs-dev/data/staging/ghg-emissions/wri_unfcc/data.json
+  credentials: dev_s3
+
+#############
 # ADEME
 #############
 
