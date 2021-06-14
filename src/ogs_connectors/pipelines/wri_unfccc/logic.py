@@ -1,7 +1,16 @@
 from .mapping import row_mapping
+import pandas as pd
+from typing import List, Dict
 
 
-def wri_unfccc_connector(df):
+def wri_unfccc_connector(df: pd.DataFrame) -> List[Dict]:
+    """
+    wri_unfccc connector
+    Given a pandas dataframe, extracts the different emissions and return them as a list
+    of dicts
+    @param df:
+    @return:
+    """
     # Set the year columns in the same one
     df = df.melt(
         id_vars=["country", "source", "sector", "gas"],
