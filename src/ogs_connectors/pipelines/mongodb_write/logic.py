@@ -1,7 +1,7 @@
 from .exceptions import InsertEmissionError
-from .io_tools import get_mongodb_client
+from ogs_connectors.io_tools import get_mongodb_client
 from tqdm import tqdm
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Callable
 import logging
 from kedro.framework.session import get_current_session
 
@@ -143,8 +143,69 @@ def insert_emissions(emissions: List[Dict], mongodb_params: Dict) -> None:
             nb_failed += 1
 
     # Batch insert of created documents
-    emissions_collection.insert_many(documents_to_insert)
+    if documents_to_insert:
+        emissions_collection.insert_many(documents_to_insert)
 
     logger.info('Succesfully inserted %s emissions.' % nb_inserted)
     if nb_failed:
         logger.warning('Failed to insert %s emissions. See logs for details.' % nb_failed)
+
+
+def extract_data_source(dataset_name: str) -> str:
+    """
+    Given a dataset name, extracts the data source.
+    Data source being the first field of the dataset name (split by /)
+    @param dataset_name: str, name of the dataset
+    @return: str, extracted data source
+    """
+    # data_source is the first partition key
+    return dataset_name.split('/')[0]
+
+
+def filter_data_sources(partitioned_dataset: Dict[str, Callable], data_sources: List[str]) -> Dict[str, Callable]:
+    """
+    Given a partitioned dataset (dict of partitions: datasets) and a list of data sources,
+    Filter the dict so that only given data sources are kept
+    @param partitioned_dataset:
+    @param data_sources:
+    @return:
+    """
+    for dataset_name in list(partitioned_dataset):
+        dataset_data_source = extract_data_source(dataset_name)
+
+        # Remove dataset if not in the given data_sources
+        if dataset_data_source not in data_sources:
+            partitioned_dataset.pop(dataset_name)
+            continue
+
+        # Remove data_source from the list to find
+        data_sources.remove(dataset_data_source)
+
+    # Warnings if some data_sources were not found
+    if data_sources:
+        for data_source in data_sources:
+            logger.warning('Data source: %s not found in dataset. Ignoring.' % data_source)
+
+    return partitioned_dataset
+
+
+def insert_partitioned_emissions(emissions: Dict[str, Callable], mongodb_params: Dict, params: Dict) -> None:
+    """
+    Given emissions, a partitioned dataset, and a list of data sources, insert the different sub datasets
+    into mongodb, making sure to insert only desired data sources
+    @param emissions: partitioned dataset (dict): emissions dataset
+    @param mongodb_params: dict: mongodb params
+    @param params: dict: process params
+    @return:
+    """
+    emissions = filter_data_sources(
+        partitioned_dataset=emissions,
+        data_sources=params['data_sources']
+    )
+
+    for key in emissions.keys():
+        logger.info('Inserting emissions for data source: %s.' % key)
+        insert_emissions(
+            emissions=emissions[key](),
+            mongodb_params=mongodb_params
+        )

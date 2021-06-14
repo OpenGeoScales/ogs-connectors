@@ -1,5 +1,8 @@
 import pymongo
 from typing import Dict
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_mongodb_client(mongodb_params: Dict, mongodb_credentials: Dict) -> pymongo.MongoClient:
@@ -35,4 +38,5 @@ def get_mongodb_client(mongodb_params: Dict, mongodb_credentials: Dict) -> pymon
             params=params
         )
 
+    logger.info('Opening mongo client for url: %s' % full_url)
     return pymongo.MongoClient(full_url)

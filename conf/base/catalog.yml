@@ -107,3 +107,12 @@ cdiac_nations_emissions:
   filepath: s3://ogs-dev/data/raw/ghg-emissions/cdiac/Fossil-Fuel_CO2_Emissions_by_Nation.csv
   credentials: dev_s3
 
+#############
+# GLOBAL DATASETS
+#############
+
+staging:
+  type: PartitionedDataSet
+  dataset: ogs_connectors.extras.datasets.json_lines_dataset.JSONLinesDataSet
+  path: s3://ogs-dev/data/staging/ghg-emissions/
+  credentials: dev_s3
