@@ -9,3 +9,8 @@ relational_mongodb:
     authSource: "admin"
     retryWrites: "true"
     w: "majority"
+
+mongodb_write:
+  data_sources:
+    - gcp
+    - wri_unfccc
